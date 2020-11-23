@@ -17,7 +17,7 @@ func main() {
     p := make([]byte, 2048)
     addr := net.UDPAddr{
         Port: 1234,
-        IP: net.ParseIP("127.0.0.1"),
+        IP: net.ParseIP("0.0.0.0"),
     }
     ser, err := net.ListenUDP("udp", &addr)
     if err != nil {
