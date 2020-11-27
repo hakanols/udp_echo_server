@@ -1,8 +1,7 @@
-    gcloud auth configure-docker
+PROJECT_ID = e.g "echo_server_1"
 
-    gcloud projects list
-Get PROJECT_ID
-
+    gcloud projects create [PROJECT_ID]
+    gcloud projects list // Verify
 
 LOCAL_DOCKER_TAG = Arbitrary tag name for your docker image
 
@@ -23,6 +22,4 @@ INSTANCE_NAMES = Arbitrary name for your VM
     gcloud compute instances create-with-container [INSTANCE_NAMES] --container-image=gcr.io/[PROJECT_ID]/[DOCKER_IMAGE] --image=[VM_IMAGE] --tags=UDP_ON_1234
     gcloud compute firewall-rules create "udp_open_on_1234" --allow=udp:1234 --source-ranges="0.0.0.0/0" --source-tags=UDP_ON_1234
 
-TODO Remove me
-
-    gcloud compute --project "udp-echo-296609" ssh --zone europe-north1-a test
+    gcloud compute instances list // Get [EXTERNAL_IP]
