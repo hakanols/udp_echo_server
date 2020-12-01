@@ -1,25 +1,28 @@
-PROJECT_ID = e.g "echo_server_1"
+Create a new project in Google console
 
-    gcloud projects create [PROJECT_ID]
-    gcloud projects list // Verify
+Activate Container Registry API for that project
 
-LOCAL_DOCKER_TAG = Arbitrary tag name for your docker image
-
-    cd [PROJECT_PATH]
-    docker build --rm -t [LOCAL_DOCKER_TAG] .
-    docker images // Verify
+    gcloud projects list // Get PROJECT_ID
+	gcloud config set project [PROJECT_ID]
 
 DOCKER_IMAGE = Arbitrary name for your image
 
-    docker tag [LOCAL_DOCKER_TAG] gcr.io/[PROJECT_ID]/[DOCKER_IMAGE]
+    cd [PROJECT_PATH]
+    docker build --rm -t gcr.io/[PROJECT_ID]/[DOCKER_IMAGE] .
+    docker images // Verify
+
     docker push gcr.io/[PROJECT_ID]/[DOCKER_IMAGE]
-    gcloud compute images list // Verify
-    
-Chose VM_IMAGE. I chose a LTS cos-cloud ( Container-Optimized OS) image "cos-85-13310-1041-28".
+	gcloud container images list --repository=gcr.io/[PROJECT_ID] // Verify
 
 INSTANCE_NAMES = Arbitrary name for your VM
 
-    gcloud compute instances create-with-container [INSTANCE_NAMES] --container-image=gcr.io/[PROJECT_ID]/[DOCKER_IMAGE] --image=[VM_IMAGE] --tags=UDP_ON_1234
-    gcloud compute firewall-rules create "udp_open_on_1234" --allow=udp:1234 --source-ranges="0.0.0.0/0" --source-tags=UDP_ON_1234
+TAG_NAME = Arbitrary name. E.g. "udp-1234"
+
+RULE_NAME = Arbitrary name. E.g. "udp-1234"
+
+    gcloud compute instances create-with-container [INSTANCE_NAMES] --container-image=gcr.io/[PROJECT_ID]/[DOCKER_IMAGE] --zone=europe-north1-a
+	gcloud compute instances add-tags [INSTANCE_NAMES] --tags=[TAG_NAME]
+    gcloud compute firewall-rules create [RULE_NAME] --allow=udp:1234 --source-ranges="0.0.0.0/0" --target-tags=[TAG_NAME]
 
     gcloud compute instances list // Get [EXTERNAL_IP]
+
