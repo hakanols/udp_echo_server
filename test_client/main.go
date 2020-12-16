@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-    ip_address := "127.0.0.1"
+    ip_address := "127.0.0.1:1234"
+	message := "Hi mr UDP Server, How are you doing?"
 
 	if 2 < len(os.Args) {
 	   fmt.Println("Unvalid numer of arguments")
@@ -20,18 +21,18 @@ func main() {
 		}
     }
 
-	fmt.Printf("IP Address: %s\n", ip_address)
-
-    p :=  make([]byte, 2048)
-    conn, err := net.Dial("udp", ip_address+":1234")
+    payload :=  make([]byte, 2048)
+    conn, err := net.Dial("udp", ip_address)
     if err != nil {
         fmt.Printf("Some error %v", err)
         return
     }
-    fmt.Fprintf(conn, "Hi UDP Server, How are you doing?")
-    _, err = bufio.NewReader(conn).Read(p)
+
+    fmt.Fprintf(conn, message)
+	fmt.Printf("Sent to address: \"%s\" message: \"%s\"\n", ip_address, message)
+    _, err = bufio.NewReader(conn).Read(payload)
     if err == nil {
-        fmt.Printf("%s\n", p)
+        fmt.Printf("Received message: \"%s\"\n", payload)
     } else {
         fmt.Printf("Some error %v\n", err)
     }

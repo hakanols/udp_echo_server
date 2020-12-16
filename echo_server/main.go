@@ -4,33 +4,28 @@ import (
     "net"  
 )
 
-
-func sendResponse(conn *net.UDPConn, addr *net.UDPAddr) {
-    _,err := conn.WriteToUDP([]byte("From server: Hello I got your message "), addr)
-    if err != nil {
-        fmt.Printf("Couldn't send response %v", err)
-    }
-}
-
-
 func main() {
-    p := make([]byte, 2048)
-    addr := net.UDPAddr{
+    localaddr := net.UDPAddr{
         Port: 1234,
         IP: net.ParseIP("0.0.0.0"),
     }
-    ser, err := net.ListenUDP("udp", &addr)
+    ser, err := net.ListenUDP("udp", &localaddr)
     if err != nil {
         fmt.Printf("Some error %v\n", err)
         return
     }
+	fmt.Printf("Start listening on UDP port: %d\n", localaddr.Port)
     for {
-        _,remoteaddr,err := ser.ReadFromUDP(p)
-        fmt.Printf("Read a message from %v %s \n", remoteaddr, p)
-        if err !=  nil {
-            fmt.Printf("Some error  %v", err)
+	    payload := make([]byte, 2048)
+        _, remoteaddr, errread := ser.ReadFromUDP(payload)
+        if errread !=  nil {
+            fmt.Printf("Error reading message: %v\n", errread)
             continue
         }
-        go sendResponse(ser, remoteaddr)
+		fmt.Printf("Echo message \"%s\" from %v\n", payload, remoteaddr)
+        _, errwrite := ser.WriteToUDP(payload, remoteaddr)
+        if errwrite != nil {
+            fmt.Printf("Couldn't send response: %v\n", errwrite)
+        }
     }
 }
