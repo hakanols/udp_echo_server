@@ -14,11 +14,12 @@ func main() {
 	   fmt.Println("Unvalid numer of arguments")
 	   return
 	} else if len(os.Args) == 2 {
-		ip_address = os.Args[1]
-		if net.ParseIP(ip_address) == nil {
-			fmt.Printf("Invalid IP Address: %s\n", ip_address)
+		ip := os.Args[1]
+		if net.ParseIP(ip) == nil {
+			fmt.Printf("Invalid IP Address: %s\n", ip)
 			return
 		}
+		ip_address=ip+":1234"
     }
 
     payload :=  make([]byte, 2048)
