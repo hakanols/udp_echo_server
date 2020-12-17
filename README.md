@@ -21,7 +21,7 @@ Some times that is the case. E.g. How to debug?
 Mostly solvable but with added complexity. There are no silver bullets but for my case
 I would argue that it is a perfect match.
 
-See (distroless-go-hello) for an minimal example.
+See [distroless-go-hello](distroless-go-hello) for an minimal example.
 
 Dependencies for examples below
 --------------------------------
