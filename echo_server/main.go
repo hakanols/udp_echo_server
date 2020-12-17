@@ -1,7 +1,7 @@
 package main
 import (
-    "fmt" 
-    "net"  
+    "fmt"
+    "net"
 )
 
 func main() {
@@ -14,16 +14,18 @@ func main() {
         fmt.Printf("Some error %v\n", err)
         return
     }
-	fmt.Printf("Start listening on UDP port: %d\n", localaddr.Port)
+    fmt.Printf("Start listening on UDP port: %d\n", localaddr.Port)
     for {
-	    payload := make([]byte, 2048)
-        _, remoteaddr, errread := ser.ReadFromUDP(payload)
+        payload := make([]byte, 2048)
+
+        count, remoteaddr, errread := ser.ReadFromUDP(payload)
         if errread !=  nil {
             fmt.Printf("Error reading message: %v\n", errread)
             continue
         }
-		fmt.Printf("Echo message \"%s\" from %v\n", payload, remoteaddr)
-        _, errwrite := ser.WriteToUDP(payload, remoteaddr)
+
+        fmt.Printf("Echo message \"%s\" from %v\n", payload, remoteaddr)
+        _, errwrite := ser.WriteToUDP(payload[0:count], remoteaddr)
         if errwrite != nil {
             fmt.Printf("Couldn't send response: %v\n", errwrite)
         }

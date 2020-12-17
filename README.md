@@ -1,28 +1,64 @@
-Create a new project in Google console
+UDP Echo Go server
+==================
 
-Activate Container Registry API for that project
+Needed a online UDP echo server for some experimentaion with Nordic nRF9160 and LTE-m and NB-IoT.
+The echo server is ofcourse generic. This repo also contain a test client, deployment instructions and
+some experimentation with Distroless.
 
-    gcloud projects list // Get PROJECT_ID
-	gcloud config set project [PROJECT_ID]
+[Docker Distroless](https://github.com/GoogleContainerTools/distroless)
+-------------------
+I am a strong beliver in keeping complexity down. I belve that distroless in and
+[Multisage build](https://docs.docker.com/develop/develop-images/multistage-build/) succeed in that.
+* Platfor independednt build and run envirement (Linux, Windos, Mac & cloud)
+* Immutable environment
+* No unesesasy "stuff" in run environment
+* Relative uncomplicaded config (8 line Dockerfile for both build & run)
+* Only Docker as dependanscy
 
-DOCKER_IMAGE = Arbitrary name for your image
+One valid critic is that perhaps one type of komplexity is just changed for another.
+Some times that is the case. E.g. How to debug?
+Mostly solvabal but with added complexity. There are no silver bullets but for my case
+I would argue that it is a perfect match.
 
-    cd [PROJECT_PATH]
-    docker build --rm -t gcr.io/[PROJECT_ID]/[DOCKER_IMAGE] .
-    docker images // Verify
+See [distroless-go-hello] for an minimal example.
 
-    docker push gcr.io/[PROJECT_ID]/[DOCKER_IMAGE]
-	gcloud container images list --repository=gcr.io/[PROJECT_ID] // Verify
+Dependencies for examples below
+--------------------------------
+* [GO Lang](https://golang.org/)
+* [Docker](https://www.docker.com/)
 
-INSTANCE_NAMES = Arbitrary name for your VM
 
-TAG_NAME = Arbitrary name. E.g. "udp-1234"
+Local echo server without Docker
+--------------------------------
+Terminal 1:
 
-RULE_NAME = Arbitrary name. E.g. "udp-1234"
+    cd echo_server
+	go run main
+	
+Terminal 2:
 
-    gcloud compute instances create-with-container [INSTANCE_NAMES] --container-image=gcr.io/[PROJECT_ID]/[DOCKER_IMAGE] --zone=europe-north1-a
-	gcloud compute instances add-tags [INSTANCE_NAMES] --tags=[TAG_NAME]
-    gcloud compute firewall-rules create [RULE_NAME] --allow=udp:1234 --source-ranges="0.0.0.0/0" --target-tags=[TAG_NAME]
+    cd test_client
+	go run main 0.0.0.0
 
-    gcloud compute instances list // Get [EXTERNAL_IP]
+Local echo server with Docker
+--------------------------------
+Terminal 1:
 
+    cd echo_server
+    docker build --rm -t echo .
+    docker run --rm -p 1234:1234/udp -t echo
+	
+Terminal 2:
+
+    cd test_client
+	go run main
+	
+Echo server on Google Could
+---------------------------
+[Start server on Goolge cloud](GoogleCloud.md)
+
+
+Terminal:
+
+    cd test_client
+	go run main [SERVER_IP]
